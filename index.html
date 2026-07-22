@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microsoft 365 設定のお願い（作業手順書）</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm 18mm 14mm; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none; }
+    .no-print { display: none !important; }
+    .step, .panel, table, .idbox { page-break-inside: avoid; }
+    h2 { page-break-after: avoid; }
+  }
+
+  :root {
+    --ink: #1b2733;
+    --muted: #5d6b7a;
+    --line: #ccd6e0;
+    --line-soft: #e6ecf2;
+    --bg-soft: #f5f8fb;
+    --primary: #1a3a5c;
+    --primary-soft: #e9f1f8;
+    --accent: #17727f;
+    --warn-bg: #fff7e3;
+    --warn-line: #dfb949;
+    --ok-bg: #eef8f0;
+    --ok-line: #3d8a52;
+    --ng: #b03030;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    color: var(--ink);
+    font-family: "Yu Gothic", "游ゴシック", "Meiryo", "メイリオ", sans-serif;
+    font-size: 11.5pt;
+    line-height: 1.85;
+    background: #f2f5f8;
+  }
+  body {
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 16mm 14mm 20mm;
+    background: #fff;
+    box-shadow: 0 0 14px rgba(0,0,0,.06);
+  }
+  p { margin: 7pt 0; }
+  strong { color: var(--primary); }
+
+  /* ---- タイトル ---- */
+  .doc-title { text-align: center; border-bottom: 2.5pt solid var(--primary); padding-bottom: 10pt; margin-bottom: 16pt; }
+  .doc-title h1 { margin: 0; font-size: 19pt; font-weight: 700; color: var(--primary); letter-spacing: .03em; }
+  .doc-title .sub { margin-top: 5pt; font-size: 10pt; color: var(--muted); }
+
+  /* ---- 冒頭あいさつ ---- */
+  .lead { background: var(--primary-soft); border-left: 4pt solid var(--primary); padding: 12pt 16pt; margin: 0 0 16pt; }
+  .lead h2 { margin: 0 0 6pt; border: none; padding: 0; font-size: 13pt; }
+  .lead p:last-child { margin-bottom: 0; }
+
+  /* ---- 見出し ---- */
+  h2 { font-size: 14pt; color: var(--primary); border-bottom: 1.2pt solid var(--line); padding-bottom: 4pt; margin: 22pt 0 10pt; font-weight: 700; }
+  h3 { font-size: 12pt; margin: 14pt 0 6pt; border-left: 3.5pt solid var(--accent); padding-left: 9pt; font-weight: 700; }
+
+  /* ---- 画面文言 ---- */
+  .ui { font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .type { display: inline-block; font-family: "Consolas","Courier New",monospace; background: #fff; border: 1pt solid var(--line); border-radius: 3pt; padding: 1pt 7pt; font-size: 10.5pt; color: #143c52; }
+
+  /* ---- ステップ ---- */
+  .step { border: 1pt solid var(--line); border-radius: 5pt; margin: 12pt 0; overflow: hidden; background: #fff; }
+  .step > .head { display: flex; align-items: center; gap: 10pt; background: var(--primary); color: #fff; padding: 7pt 12pt; }
+  .step > .head .no { flex: 0 0 auto; width: 22pt; height: 22pt; border-radius: 50%; background: #fff; color: var(--primary); font-weight: 700; font-size: 12pt; display: flex; align-items: center; justify-content: center; }
+  .step > .head .ttl { font-size: 12.5pt; font-weight: 700; }
+  .step > .head .time { margin-left: auto; font-size: 9.5pt; opacity: .85; }
+  .step > .body { padding: 10pt 14pt 12pt; }
+  .step > .body > :first-child { margin-top: 0; }
+  .step > .body > :last-child { margin-bottom: 0; }
+
+  ol.dos { margin: 6pt 0 6pt 0; padding-left: 20pt; }
+  ol.dos > li { margin: 7pt 0; padding-left: 3pt; }
+  ol.dos > li::marker { font-weight: 700; color: var(--primary); }
+
+  /* ---- パネル ---- */
+  .panel { border-left: 4pt solid var(--accent); background: var(--bg-soft); padding: 9pt 13pt; margin: 10pt 0; border-radius: 0 4pt 4pt 0; }
+  .panel.warn { border-left-color: var(--warn-line); background: var(--warn-bg); }
+  .panel.ok { border-left-color: var(--ok-line); background: var(--ok-bg); }
+  .panel .h { font-weight: 700; display: block; margin-bottom: 3pt; }
+  .panel p { margin: 4pt 0; }
+  .panel p:last-child { margin-bottom: 0; }
+
+  /* ---- 表 ---- */
+  table { width: 100%; border-collapse: collapse; margin: 8pt 0 12pt; font-size: 10.5pt; }
+  th, td { border: .8pt solid var(--line); padding: 6pt 9pt; text-align: left; vertical-align: top; }
+  th { background: var(--bg-soft); color: var(--primary); font-weight: 700; }
+  td.n { width: 46pt; text-align: center; font-weight: 700; color: var(--primary); }
+
+  /* ---- 許可リスト ---- */
+  table.perm { font-size: 10.5pt; }
+  table.perm td:nth-child(1) { width: 26pt; text-align: center; font-size: 13pt; color: var(--primary); }
+  table.perm td:nth-child(2) { width: 44%; font-family: "Consolas","Courier New",monospace; color: #143c52; white-space: nowrap; }
+
+  /* ---- チェックリスト ---- */
+  ul.check { list-style: none; padding-left: 0; margin: 8pt 0; }
+  ul.check li { padding: 4pt 0 4pt 24pt; position: relative; }
+  ul.check li::before { content: "☐"; position: absolute; left: 2pt; top: 2pt; color: var(--primary); font-size: 14pt; line-height: 1.4; }
+
+  /* ---- 記入欄 ---- */
+  .idbox { border: 1.2pt solid var(--primary); border-radius: 5pt; padding: 12pt 14pt; margin: 10pt 0; background: var(--bg-soft); }
+  .idbox .row { display: grid; grid-template-columns: 1fr; gap: 3pt; margin: 10pt 0; }
+  .idbox .row .lbl { font-weight: 700; color: var(--primary); font-size: 11pt; }
+  .idbox .row .fill { border-bottom: 1.2pt solid var(--muted); min-height: 20pt; background: #fff; }
+
+  .faq dt { font-weight: 700; color: var(--primary); margin-top: 10pt; }
+  .faq dd { margin: 3pt 0 0 0; }
+
+  .btn-print { display: inline-block; margin: 0 0 12pt; padding: 6pt 14pt; border: 1pt solid var(--primary); border-radius: 4pt; background: #fff; color: var(--primary); font-size: 10.5pt; cursor: pointer; }
+  footer { margin-top: 22pt; padding-top: 8pt; border-top: 1pt solid var(--line); font-size: 9.5pt; color: var(--muted); text-align: right; }
+</style>
+</head>
+<body>
+
+<button class="btn-print no-print" onclick="window.print()">この書類を印刷する</button>
+
+<div class="doc-title">
+  <h1>Microsoft 365 の設定のお願い</h1>
+  <div class="sub">画面のとおりに進めるだけの作業手順書</div>
+</div>
+
+<div class="lead">
+  <h2>はじめに</h2>
+  <p>いつもお世話になっております。<br>
+  このたび、当方でご用意するシステムから <strong>Microsoft 365（Teams・SharePoint・メールなど）の情報を「読み取る」ため</strong>の設定を、貴組織の管理画面で行っていただきたく、この書類をお送りしました。</p>
+  <p>専門知識は必要ありません。<strong>この書類に書いてある順番どおりに、画面上の文字を探してクリックしていくだけ</strong>で完了します。</p>
+</div>
+
+<table>
+  <tr><th style="width:34%">やっていただくこと</th><td>管理画面で「このシステムを使ってよい」という登録を1つ作る</td></tr>
+  <tr><th>かかる時間</th><td>およそ <strong>30〜40分</strong>（この書類を見ながら操作する場合）</td></tr>
+  <tr><th>ご用意いただくもの</th><td>パソコン、インターネット、<strong>管理者用のアカウント</strong>（後述）</td></tr>
+  <tr><th>費用</th><td><strong>かかりません</strong>（追加の購入・契約は不要です）</td></tr>
+  <tr><th>作業できる方</th><td>Microsoft 365 の管理画面にサインインできる方</td></tr>
+</table>
+
+<div class="panel">
+  <span class="h">この書類の読み方</span>
+  <p><span class="ui">『このような色の文字』</span>＝ <strong>パソコンの画面に実際に出てくる文字</strong>です。同じ文字を画面から探してクリックしてください。</p>
+  <p><span class="type">このような枠の文字</span>＝ <strong>キーボードで入力（またはコピーして貼り付け）する文字</strong>です。</p>
+</div>
+
+<div class="panel warn">
+  <span class="h">うまくいかないときは、止めてください</span>
+  <p>画面の見た目がこの書類と違う、書いてある文字が見つからない、エラーが出た——このようなときは、<strong>ご自分で判断して進めずに、その時点で手を止めて</strong>、最後のページの連絡先までご連絡ください。すぐに対応いたします。</p>
+</div>
+
+<h2>作業をはじめる前の確認</h2>
+
+<p>下の2つが「はい」であれば、そのまま進めていただけます。どちらかが「いいえ」の場合は、この作業ができる方をお探しいただくか、当方までご連絡ください。</p>
+
+<ul class="check">
+  <li>Microsoft 365 の<strong>管理者用のアカウント</strong>でサインインできる</li>
+  <li>そのアカウントが<strong>「全体管理者」または「アプリケーション管理者」</strong>という役割を持っている</li>
+</ul>
+
+<div class="panel">
+  <span class="h">役割の確認のしかた（わからない場合）</span>
+  <p>① ブラウザで <span class="type">https://admin.microsoft.com</span> を開いてサインイン<br>
+  ② 画面の右上にある丸いアイコン（ご自分の名前）をクリック<br>
+  ③ <span class="ui">『自分のアカウント』</span>をクリックし、<span class="ui">『役割』</span>または<span class="ui">『ロール』</span>と書かれた欄を見る<br>
+  ④ そこに「全体管理者」「グローバル管理者」「アプリケーション管理者」のいずれかがあれば大丈夫です</p>
+</div>
+
+<h2>作業の全体像</h2>
+
+<table>
+  <tr><th style="width:46pt">手順</th><th>内容</th><th style="width:70pt">目安</th></tr>
+  <tr><td class="n">1</td><td>管理画面を開く</td><td>1分</td></tr>
+  <tr><td class="n">2</td><td>新しい登録をつくる</td><td>5分</td></tr>
+  <tr><td class="n">3</td><td>「読み取ってよい情報」を選ぶ</td><td>15分</td></tr>
+  <tr><td class="n">4</td><td>設定を1か所だけ「はい」にする</td><td>3分</td></tr>
+  <tr><td class="n">5</td><td>「これでよい」と承認する</td><td>3分</td></tr>
+  <tr><td class="n">6</td><td>2つの番号を控えて当方へ返送</td><td>5分</td></tr>
+</table>
+
+<!-- ================= STEP 1 ================= -->
+<div class="step">
+  <div class="head"><span class="no">1</span><span class="ttl">管理画面を開く</span><span class="time">目安 1分</span></div>
+  <div class="body">
+    <ol class="dos">
+      <li>ブラウザ（Edge や Chrome）で <span class="type">https://entra.microsoft.com</span> を開きます。</li>
+      <li>管理者用のアカウントでサインインします。</li>
+      <li>画面の<strong>左側</strong>にあるメニューから <span class="ui">『アプリの登録』</span> をクリックします。</li>
+    </ol>
+    <div class="panel ok">
+      <span class="h">ここまでできたか確認</span>
+      <p>画面の上のほうに <span class="ui">『＋ 新規登録』</span> というボタンが見えていれば、正しい画面です。</p>
+    </div>
+    <div class="panel">
+      <p>左のメニューが隠れている場合は、画面左上の「三本線（≡）」のマークをクリックすると出てきます。<br>
+      <span class="ui">『アプリの登録』</span> が見当たらない場合は、<span class="ui">『アプリケーション』</span> という項目をクリックして開くと、その中に入っていることがあります。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= STEP 2 ================= -->
+<div class="step">
+  <div class="head"><span class="no">2</span><span class="ttl">新しい登録をつくる</span><span class="time">目安 5分</span></div>
+  <div class="body">
+    <ol class="dos">
+      <li>画面上部の <span class="ui">『＋ 新規登録』</span> をクリックします。</li>
+      <li><span class="ui">『名前』</span>の入力欄に、次の文字を<strong>そのまま</strong>入力します。<br>
+        → <span class="type">Sems-Graph</span>　<span style="font-size:10pt;color:var(--muted)">※大文字・小文字とハイフンもそのままお願いします</span></li>
+      <li><span class="ui">『サポートされているアカウントの種類』</span>という項目で、<strong>いちばん上の選択肢</strong>（「この組織ディレクトリのみに含まれるアカウント」で始まるもの）を選びます。<br>
+        <span style="font-size:10pt;color:var(--muted)">※これは「自分の組織の中だけで使う」という意味の設定です。社外からは使えません。</span></li>
+      <li>その下の <span class="ui">『リダイレクト URI』</span> という欄には、2つの入力箇所があります。
+        <ul style="margin:5pt 0;">
+          <li>左側の<strong>選ぶ欄</strong>：<span class="ui">『パブリック クライアント/ネイティブ (モバイルとデスクトップ)』</span> を選ぶ</li>
+          <li>右側の<strong>入力欄</strong>：<span class="type">http://localhost:8400/callback</span> を入力する</li>
+        </ul>
+      </li>
+      <li>画面下の <span class="ui">『登録』</span> ボタンをクリックします。</li>
+    </ol>
+    <div class="panel ok">
+      <span class="h">ここまでできたか確認</span>
+      <p>登録が終わると新しい画面に変わり、<span class="ui">『アプリケーション (クライアント) ID』</span> と <span class="ui">『ディレクトリ (テナント) ID』</span>という長い英数字が表示されます。<br>
+      <strong>この2つは手順6で使いますので、この画面はそのままにしておいてください。</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= STEP 3 ================= -->
+<div class="step">
+  <div class="head"><span class="no">3</span><span class="ttl">「読み取ってよい情報」を選ぶ</span><span class="time">目安 15分</span></div>
+  <div class="body">
+    <p>ここが一番作業量の多いところですが、<strong>同じ操作を繰り返すだけ</strong>です。</p>
+    <ol class="dos">
+      <li>画面の<strong>左側</strong>のメニューから <span class="ui">『API のアクセス許可』</span> をクリックします。</li>
+      <li><span class="ui">『＋ アクセス許可の追加』</span> をクリックします。</li>
+      <li>右側に一覧が出てくるので、<span class="ui">『Microsoft Graph』</span> をクリックします。</li>
+      <li>次に2つの大きなボタンが出てきます。<strong>左側の</strong> <span class="ui">『委任されたアクセス許可』</span> をクリックしてください。<br>
+        <span style="color:var(--ng);font-weight:700">※右側の『アプリケーションの許可』は選ばないでください。</span></li>
+      <li>検索の入力欄が出てきます。ここに、次の表にある文字を<strong>1つずつ入力（またはコピーして貼り付け）</strong>し、下に出てきた項目の<strong>左のチェック欄をクリックしてチェックを入れます</strong>。<br>
+        <span style="font-size:10pt;color:var(--muted)">※検索欄の文字を消して、次の文字を入れる…を繰り返します。チェックは消えずに残ります。</span></li>
+    </ol>
+
+    <div class="panel warn">
+      <span class="h">探しても出てこないときは（重要）</span>
+      <p>この検索欄は、<strong>種類ごとの「見出し」だけを表示して、中身が折りたたまれている</strong>ことがあります。項目そのものが出てこないときは、次のようにしてください。</p>
+      <p>① 検索する文字を<strong>点（.）より前だけ</strong>に短くする<br>
+      　（例：<span class="type">Calendars.Read</span> → <span class="type">Calendars</span>、<span class="type">Presence.Read</span> → <span class="type">Presence</span>）<br>
+      ② 出てきた<strong>見出しの行をクリックして開く</strong>（行の左端にある「&gt;」や「∨」のマークです）<br>
+      ③ 開いた中から、表の文字と<strong>まったく同じもの</strong>を探してチェックを入れる</p>
+      <p>似た名前が並ぶので、末尾の <span class="type">.All</span> の有無まで見比べてください。それでも見つからない項目があれば、<strong>その項目は飛ばして先へ進み</strong>、あとでご連絡ください（機能を調整して対応します）。</p>
+    </div>
+
+    <h3>チェックを入れる項目（15個）</h3>
+    <p>左の □ は、終わったら鉛筆でチェックしていただくための欄です。</p>
+
+    <table class="perm">
+      <tr><th></th><th>入力・検索する文字</th><th>何のためのものか</th></tr>
+      <tr><td>☐</td><td>User.Read</td><td>使う人ご本人の名前・メールアドレスの確認</td></tr>
+      <tr><td>☐</td><td>Team.ReadBasic.All</td><td>参加しているチームの名前一覧</td></tr>
+      <tr><td>☐</td><td>Channel.ReadBasic.All</td><td>チーム内の会話の場（チャネル）の名前一覧</td></tr>
+      <tr><td>☐</td><td>ChannelMessage.Read.All</td><td>チーム内の投稿を読む</td></tr>
+      <tr><td>☐</td><td>Group.Read.All</td><td>チームの基本情報（上の項目に必要）</td></tr>
+      <tr><td>☐</td><td>Sites.Read.All</td><td>SharePoint 内の文書を探す</td></tr>
+      <tr><td>☐</td><td>Files.Read.All</td><td>ファイルの中身を読む</td></tr>
+      <tr><td>☐</td><td>offline_access</td><td>毎回サインインし直さずに済むようにする</td></tr>
+      <tr><td>☐</td><td>Chat.Read</td><td>個人・グループのチャットを読む</td></tr>
+      <tr><td>☐</td><td>Mail.Read</td><td>ご本人のメールを読む</td></tr>
+      <tr><td>☐</td><td>Calendars.Read</td><td>ご本人の予定表を読む</td></tr>
+      <tr><td>☐</td><td>Notes.Read.All</td><td>OneNote のノートを読む</td></tr>
+      <tr><td>☐</td><td>Tasks.Read</td><td>To Do のタスクを読む</td></tr>
+      <tr><td>☐</td><td>People.Read</td><td>連絡先の候補を表示する</td></tr>
+      <tr><td>☐</td><td>Presence.Read</td><td>在席状況（オンライン等）の表示</td></tr>
+    </table>
+
+    <div class="panel" style="border-left-color:var(--ng);background:#fdf0f0">
+      <span class="h" style="color:var(--ng)">表の作業が終わったら、必ずここを押してください</span>
+      <p>15個すべてにチェックを入れ終わったら、<strong>画面のいちばん下</strong>にある <span class="ui">『アクセス許可の追加』</span> ボタンをクリックします。<br>
+      <strong>このボタンを押さずに画面を閉じると、チェックした内容がすべて消えてしまいます。</strong></p>
+    </div>
+
+    <div class="panel ok">
+      <span class="h">ここまでできたか確認</span>
+      <p>元の画面に戻ると、いま追加した項目が<strong>一覧表として並んで表示</strong>されていればOKです。<br>
+      この時点では「状態」の欄に警告のようなマークが出ていますが、<strong>手順5で消えますので問題ありません</strong>。</p>
+      <p>数が足りない場合は、もう一度 <span class="ui">『＋ アクセス許可の追加』</span> から同じ操作を行い、足りない分だけ追加してください（<strong>何回に分けても構いません</strong>）。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= STEP 4 ================= -->
+<div class="step">
+  <div class="head"><span class="no">4</span><span class="ttl">設定を1か所だけ「はい」にする</span><span class="time">目安 3分</span></div>
+  <div class="body">
+    <ol class="dos">
+      <li>画面の<strong>左側</strong>のメニューから <span class="ui">『Authentication (Preview)』</span> をクリックします。<br>
+        <span style="font-size:10pt;color:var(--muted)">※画面が日本語表示の場合は <span class="ui">『認証』</span> と書かれています。</span></li>
+      <li>クリックすると、<strong>接続先アドレスの設定画面（リダイレクト URI）が開きます</strong>。ここではありませんので、<strong>画面の上のほうに横に並んでいるタブ</strong>から <span class="ui">『設定』</span>（英語表示の場合は <span class="ui">『Settings』</span>）をクリックして切り替えてください。</li>
+      <li>切り替えたページを<strong>いちばん下までスクロール</strong>します。</li>
+      <li><span class="ui">『パブリック クライアント フローを許可する』</span> という項目を見つけ、そのスイッチを <span class="ui">『はい』</span> 側に切り替えます（青色になります）。</li>
+      <li>ページ上部の <span class="ui">『保存』</span> をクリックします。<br>
+        <span style="font-size:10pt;color:var(--muted)">※画面によっては保存ボタンがなく、自動で保存される場合もあります。</span></li>
+    </ol>
+    <div class="panel">
+      <p>この設定は、パスワードのような「秘密の鍵」を使わずに、<strong>いつもの Microsoft のサインイン画面だけで安全に使えるようにする</strong>ためのものです。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= STEP 5 ================= -->
+<div class="step">
+  <div class="head"><span class="no">5</span><span class="ttl">「これでよい」と承認する</span><span class="time">目安 3分</span></div>
+  <div class="body">
+    <ol class="dos">
+      <li>画面の<strong>左側</strong>のメニューから、もう一度 <span class="ui">『API のアクセス許可』</span> をクリックします。</li>
+      <li>一覧の<strong>すぐ上</strong>にある <span class="ui">『○○○ に管理者の同意を与えます』</span> というボタンをクリックします。<br>
+        <span style="font-size:10pt;color:var(--muted)">※○○○ の部分には、貴組織の名前が入っています。</span></li>
+      <li>確認の小窓が出たら <span class="ui">『はい』</span> をクリックします。</li>
+    </ol>
+    <div class="panel ok">
+      <span class="h">ここまでできたか確認</span>
+      <p>一覧の右側にある「状態」の欄が、<strong>すべて緑色のチェックマーク</strong>（「…に付与されました」という表示）になっていれば完了です。</p>
+    </div>
+    <div class="panel warn">
+      <p>この操作をしていただかないと、<strong>利用者一人ひとりが同じ確認画面を操作する必要が出てしまいます</strong>。お手数ですが必ず実施をお願いします。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= STEP 6 ================= -->
+<div class="step">
+  <div class="head"><span class="no">6</span><span class="ttl">2つの番号を控えて返送する</span><span class="time">目安 5分</span></div>
+  <div class="body">
+    <ol class="dos">
+      <li>画面の<strong>左側</strong>のメニューから <span class="ui">『概要』</span> をクリックします。</li>
+      <li>画面の上のほうに並んでいる項目のうち、次の2つの<strong>長い英数字</strong>をコピーします（各項目の右にあるコピーのマークを押すとコピーできます）。</li>
+      <li>コピーした2つを、<strong>サイボウズで、本書をお渡しした担当者宛</strong>にお送りください。</li>
+    </ol>
+
+    <div class="idbox">
+      <div style="font-weight:700;color:var(--primary)">ご返送いただく内容（この用紙に書き写していただいても構いません）</div>
+      <div class="row"><span class="lbl">アプリケーション (クライアント) ID</span><span class="fill"></span></div>
+      <div class="row"><span class="lbl">ディレクトリ (テナント) ID</span><span class="fill"></span></div>
+      <div class="row"><span class="lbl">ご担当者様のお名前・ご連絡先</span><span class="fill"></span></div>
+    </div>
+
+    <div class="panel">
+      <p>この2つは<strong>パスワードではありません</strong>。「どの組織の、どの登録か」を見分けるための番号で、これだけで情報にアクセスできるものではありません。とはいえ、貴組織のルールに沿った方法でご送付ください。</p>
+    </div>
+  </div>
+</div>
+
+<h2>作業完了のチェック</h2>
+<p>下の6つすべてにチェックが付けば、作業は完了です。</p>
+<ul class="check">
+  <li>新しい登録がつくられ、長い英数字が表示される画面がある</li>
+  <li>「アカウントの種類」で、いちばん上の選択肢を選んだ</li>
+  <li><span class="type">http://localhost:8400/callback</span> を入力した</li>
+  <li><span class="ui">『パブリック クライアント フローを許可する』</span> を「はい」にした</li>
+  <li>15個すべての項目が<strong>緑色のチェック</strong>になっている</li>
+  <li>2つの番号を返送した</li>
+</ul>
+
+<h2>安心していただくために</h2>
+
+<h3>このシステムができること</h3>
+<ul>
+  <li>この仕組みを<strong>使うご本人が、もともと見ることのできる情報</strong>を読み取るだけです</li>
+  <li>ご本人が見られないファイルやメールは、<strong>読み取れません</strong></li>
+</ul>
+
+<h3>このシステムができないこと</h3>
+<ul>
+  <li>ファイル・メール・投稿の<strong>書き換え、削除、新規作成</strong></li>
+  <li>メールやメッセージの<strong>送信</strong></li>
+  <li>他の方のアカウントや設定の変更</li>
+  <li>管理者しかできない操作（利用者の追加・権限の変更など）</li>
+</ul>
+
+<h3>あとから止めたくなったら</h3>
+<p>いつでも止められます。手順2でつくった登録の画面を開いて <span class="ui">『削除』</span> をクリックするだけで、このシステムからのアクセスは<strong>その場ですべて止まります</strong>。一時的に止めたい場合は削除せず、無効にする操作もあります（ご連絡いただければご案内します）。</p>
+
+<h3>記録が残ります</h3>
+<p>このシステムがいつ・誰の操作で使われたかは、Microsoft 側の記録（サインインの履歴）に<strong>すべて残ります</strong>。管理画面からいつでもご確認いただけます。</p>
+
+<h2>よくあるご質問</h2>
+<dl class="faq">
+  <dt>Q. パスワードや秘密の鍵をつくる必要はありますか？</dt>
+  <dd>A. いいえ、不要です。この手順の中では一切つくりません。</dd>
+
+  <dt>Q. 今使っているシステムに影響はありませんか？</dt>
+  <dd>A. ありません。今回つくる登録は他とは独立していて、既存の設定やサインインの仕組みには手を触れません。</dd>
+
+  <dt>Q. 追加の費用やライセンスは必要ですか？</dt>
+  <dd>A. 必要ありません。今回の登録作業自体には費用は発生しません。</dd>
+
+  <dt>Q. 15個のうち、一部だけ許可することはできますか？</dt>
+  <dd>A. できます。ただし対応する機能が使えなくなります（例：メールに関する項目を外すと、メールを探す機能が動きません）。ご希望があれば事前にご相談ください。</dd>
+
+  <dt>Q. <span class="type">http://localhost:8400/callback</span> という入力は安全ですか？</dt>
+  <dd>A. 安全です。「localhost」は<strong>操作している本人のパソコンの中だけ</strong>を指す決まった書き方で、外部のどこかに接続するものではありません。</dd>
+
+  <dt>Q. 途中で画面が違って進められなくなりました。</dt>
+  <dd>A. そこで手を止めて、下の連絡先までご連絡ください。Microsoft の画面は時々変更されるため、この書類と表示が異なる場合があります。</dd>
+</dl>
+
+<h2>お問い合わせ先</h2>
+<table>
+  <tr><th style="width:34%">登録するアプリの名前</th><td><span class="type">Sems-Graph</span></td></tr>
+  <tr><th>ご連絡方法</th><td><strong>サイボウズ</strong>にて、本書をお渡しした担当者宛にメッセージをお送りください</td></tr>
+</table>
+<p style="font-size:10.5pt;color:var(--muted)">※作業中にお困りの場合も、この宛先までご連絡ください。折り返しご連絡します。</p>
+
+<p>ご不明な点は、遠慮なくいつでもご連絡ください。ご希望であれば、<strong>画面を共有しながら一緒に操作</strong>させていただくことも可能です。お忙しいところ恐れ入りますが、どうぞよろしくお願いいたします。</p>
+
+<footer>やさしい版 v1.1（2026-07-22）／技術的な詳細をご確認になりたい場合は <a href="detail.html">詳細版（技術者向け）</a> をご覧ください。</footer>
+
+</body>
+</html>

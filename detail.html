@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Microsoft Entra ID アプリ登録 作業依頼書</title>
+<style>
+  /* ====== A4 印刷向けレイアウト ====== */
+  @page {
+    size: A4;
+    margin: 18mm 15mm 20mm 15mm;
+  }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+    section { page-break-before: always; }
+    section:first-of-type { page-break-before: auto; }
+    h2 { page-break-after: avoid; }
+    table, figure, .panel { page-break-inside: avoid; }
+  }
+
+  /* ====== ベース ====== */
+  :root {
+    --ink: #1a2533;
+    --muted: #5a6a7a;
+    --line: #d0d8e0;
+    --line-soft: #e8edf2;
+    --bg-soft: #f5f8fb;
+    --primary: #1a3a5c;
+    --primary-soft: #e9f0f7;
+    --accent: #2e7d8a;
+    --warn-bg: #fff8e6;
+    --warn-line: #e0c060;
+    --ok: #2a7a3a;
+    --ng: #b03030;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    color: var(--ink);
+    font-family: "Yu Gothic", "游ゴシック", "Meiryo", "メイリオ", sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.7;
+    background: #fafbfd;
+  }
+  body {
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 18mm 15mm 20mm;
+    background: white;
+    box-shadow: 0 0 12px rgba(0,0,0,0.05);
+  }
+
+  /* ====== タイトル ====== */
+  .doc-title {
+    text-align: center;
+    border-bottom: 2pt solid var(--primary);
+    padding-bottom: 8pt;
+    margin-bottom: 16pt;
+  }
+  .doc-title h1 {
+    margin: 0;
+    font-size: 18pt;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+  }
+  .doc-title .subtitle {
+    margin-top: 4pt;
+    font-size: 9pt;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ====== 宛先ブロック ====== */
+  .addressee {
+    background: var(--primary-soft);
+    border-left: 3pt solid var(--primary);
+    padding: 10pt 14pt;
+    margin: 14pt 0 18pt;
+  }
+  .addressee h2 {
+    margin: 0 0 6pt;
+    font-size: 12pt;
+    color: var(--primary);
+    border: none;
+    padding: 0;
+  }
+  .addressee p { margin: 4pt 0; }
+  .addressee dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4pt 12pt;
+    margin: 8pt 0 0;
+    font-size: 9.5pt;
+  }
+  .addressee dt { font-weight: 600; color: var(--primary); }
+  .addressee dd { margin: 0; }
+
+  /* ====== 見出し ====== */
+  h2 {
+    font-size: 13pt;
+    color: var(--primary);
+    border-bottom: 1pt solid var(--line);
+    padding-bottom: 3pt;
+    margin: 18pt 0 10pt;
+    font-weight: 600;
+  }
+  h3 {
+    font-size: 11pt;
+    color: var(--ink);
+    margin: 14pt 0 6pt;
+    border-left: 3pt solid var(--accent);
+    padding-left: 8pt;
+    font-weight: 600;
+  }
+  h4 {
+    font-size: 10.5pt;
+    margin: 10pt 0 4pt;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  p { margin: 6pt 0; }
+  strong { color: var(--primary); }
+  code {
+    background: var(--bg-soft);
+    padding: 1pt 5pt;
+    border-radius: 2pt;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 9.5pt;
+    color: var(--accent);
+    border: 0.5pt solid var(--line-soft);
+  }
+
+  /* ====== テーブル ====== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8pt 0 12pt;
+    font-size: 9.5pt;
+  }
+  th, td {
+    border: 0.5pt solid var(--line);
+    padding: 5pt 8pt;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--bg-soft);
+    color: var(--primary);
+    font-weight: 600;
+    border-bottom: 1pt solid var(--primary);
+  }
+  table.compact th, table.compact td { padding: 4pt 6pt; font-size: 9pt; }
+  table.scopes td:first-child { font-family: "Consolas", monospace; color: var(--accent); white-space: nowrap; }
+  table.steps td:first-child { width: 30%; }
+
+  /* ====== パネル ====== */
+  .panel {
+    border-left: 3pt solid var(--accent);
+    background: var(--bg-soft);
+    padding: 8pt 12pt;
+    margin: 10pt 0;
+    border-radius: 0 3pt 3pt 0;
+  }
+  .panel.warn {
+    border-left-color: var(--warn-line);
+    background: var(--warn-bg);
+  }
+  .panel.note {
+    border-left-color: var(--muted);
+    background: var(--line-soft);
+    font-size: 9.5pt;
+  }
+  .panel.confirm {
+    border-left-color: var(--ok);
+    background: #f0f8f2;
+  }
+  .panel h4 { margin-top: 0; }
+
+  /* ====== チェックリスト ====== */
+  ul.checklist {
+    list-style: none;
+    padding-left: 0;
+    margin: 8pt 0;
+  }
+  ul.checklist li {
+    padding: 3pt 0 3pt 22pt;
+    position: relative;
+  }
+  ul.checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 4pt;
+    color: var(--primary);
+    font-size: 12pt;
+    line-height: 1;
+  }
+
+  /* ====== スクリーンショット ====== */
+  figure.screenshot {
+    margin: 10pt 0 14pt;
+    padding: 0;
+    border: 0.5pt solid var(--line);
+    border-radius: 3pt;
+    background: var(--bg-soft);
+    page-break-inside: avoid;
+  }
+  figure.screenshot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 3pt 3pt 0 0;
+  }
+  figure.screenshot .placeholder {
+    display: block;
+    padding: 36pt 20pt;
+    text-align: center;
+    color: var(--muted);
+    font-size: 9pt;
+    background:
+      repeating-linear-gradient(45deg, #f5f8fb 0 8pt, #ecf0f5 8pt 16pt);
+    border-bottom: 0.5pt dashed var(--line);
+  }
+  figure.screenshot figcaption {
+    padding: 5pt 10pt;
+    font-size: 8.5pt;
+    color: var(--muted);
+    border-top: 0.5pt solid var(--line);
+    background: white;
+    border-radius: 0 0 3pt 3pt;
+  }
+  figure.screenshot figcaption .label {
+    color: var(--accent);
+    font-weight: 600;
+    margin-right: 6pt;
+  }
+
+  /* ====== バッジ ====== */
+  .badge {
+    display: inline-block;
+    padding: 1pt 6pt;
+    border-radius: 2pt;
+    font-size: 8.5pt;
+    font-weight: 600;
+    margin-right: 4pt;
+  }
+  .badge.required { background: #f0d8d8; color: var(--ng); }
+  .badge.optional { background: #e0e8f0; color: var(--muted); }
+  .badge.phase1 { background: var(--primary-soft); color: var(--primary); }
+  .badge.phase2 { background: #e8e0f0; color: #604080; }
+
+  /* ====== セクション区切り ====== */
+  section { margin: 20pt 0; }
+  hr {
+    border: none;
+    border-top: 0.5pt solid var(--line);
+    margin: 16pt 0;
+  }
+
+  /* ====== Q&A ====== */
+  .qa { margin: 10pt 0; }
+  .qa dt {
+    font-weight: 600;
+    color: var(--primary);
+    margin-top: 8pt;
+  }
+  .qa dt::before {
+    content: "Q. ";
+    color: var(--accent);
+  }
+  .qa dd {
+    margin: 4pt 0 8pt 14pt;
+    padding-left: 4pt;
+    border-left: 1.5pt solid var(--line-soft);
+  }
+  .qa dd::before {
+    content: "A. ";
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ====== フッター ====== */
+  .doc-footer {
+    margin-top: 24pt;
+    padding-top: 8pt;
+    border-top: 0.5pt solid var(--line);
+    font-size: 8.5pt;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ====== 印刷ボタン（画面用） ====== */
+  .print-bar {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    background: var(--primary);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12pt;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    z-index: 99;
+  }
+  .print-bar:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<button class="print-bar no-print" onclick="window.print()">🖨️ PDF として保存</button>
+
+<div class="doc-title">
+  <h1>Microsoft Entra ID アプリ登録 作業依頼書</h1>
+  <div class="subtitle">Microsoft Graph API 連携のための OAuth アプリケーション登録手順</div>
+</div>
+
+<div class="addressee">
+  <h2>管理者様へ</h2>
+  <p>本書は、申請者が開発・運用するアプリケーション（社内 AI アシスタント／ISMS 監査支援システム 等）を Microsoft 365 環境と連携させるため、対象テナント内に <strong>OAuth アプリケーション登録</strong> を行っていただく作業手順を、画面操作レベルで記載したものです。</p>
+  <dl>
+    <dt>想定対応者</dt>
+    <dd>Microsoft Entra ID（旧 Azure AD）の <strong>グローバル管理者</strong> または <strong>アプリケーション管理者</strong> ロールを保有される方<br>
+        ※ Microsoft 365 の管理者画面（<code>admin.microsoft.com</code>）にサインインできて「Entra ID（または Azure AD）」のメニューが見える方であれば対応可能です。</dd>
+    <dt>想定所要時間</dt>
+    <dd>30〜45 分（本書を見ながら画面を操作する想定）</dd>
+    <dt>困った時のご連絡</dt>
+    <dd>作業中に画面の表記が本書と異なる、ボタンが見当たらない、エラーが出る等の場合は、自己判断で進めず<strong>作業をその時点で止めて</strong>、10 章記載の連絡先までご連絡ください（即日対応します）。</dd>
+  </dl>
+</div>
+
+<!-- =========== 0章 =========== -->
+<section>
+  <h2>0. 用語と前提</h2>
+
+  <table class="compact">
+    <thead><tr><th>用語</th><th>説明</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Microsoft Entra ID</strong></td><td>旧 Azure Active Directory（Azure AD）。Microsoft 365 のユーザー・認証基盤</td></tr>
+      <tr><td><strong>アプリ登録 (App Registration)</strong></td><td>外部アプリケーションが Microsoft 365 のデータにアクセスするための「身分証」をテナント内に発行する操作</td></tr>
+      <tr><td><strong>委任権限 (Delegated)</strong></td><td>アプリがサインインユーザー本人として API を叩く方式。ユーザーが持つ権限の範囲内でしか動かない</td></tr>
+      <tr><td><strong>アプリ権限 (Application)</strong></td><td>アプリ自体に与えられる権限。ユーザー不在で動く（バッチ用途）。本案件では <strong>使用しません</strong></td></tr>
+      <tr><td><strong>管理者同意 (Admin Consent)</strong></td><td>テナント全体に API 利用許可を与える管理者の確認操作</td></tr>
+      <tr><td><strong>Client ID / Tenant ID</strong></td><td>アプリ登録完了後に発行される識別子（UUID）。申請者に通知いただく</td></tr>
+      <tr><td><strong>スコープ (Scope)</strong></td><td>API のうち、どの操作を許可するかの粒度（例：<code>Files.Read.All</code> = 全ファイル読み取り）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>本案件における原則</h3>
+  <ul>
+    <li>✅ <strong>委任権限のみ</strong> を使用（アプリ権限は不使用）</li>
+    <li>✅ <strong>読み取り (Read) 権限のみ</strong>（書き込み・削除は要求しません）</li>
+    <li>✅ <strong>シングルテナント設定</strong>（対象テナント内でのみ利用可能・他社からはアクセス不可）</li>
+    <li>✅ <strong>OAuth 2.0 Authorization Code Flow + PKCE</strong>（パブリッククライアント・クライアントシークレット不使用）</li>
+  </ul>
+
+  <h3>作業開始前の確認事項</h3>
+  <p>以下を満たしていれば本書の手順を実施可能です。1 つでも該当しない場合は申請者にご連絡ください。</p>
+  <ul class="checklist">
+    <li>Microsoft 365 の管理者用アカウント（業務用メールアドレス）でサインインできる</li>
+    <li>そのアカウントが「<strong>グローバル管理者</strong>」または「<strong>アプリケーション管理者</strong>」ロールを持っている<br>
+        <span style="color:var(--muted); font-size:9pt;">確認方法：<code>admin.microsoft.com</code> にサインイン → 右上のアカウントアイコン → 「自分のアカウント」→「ロール」欄を確認</span></li>
+    <li>本書をご自身の画面で表示しながら、別タブで管理画面を操作できる環境がある</li>
+    <li>作業中に申請者と連絡を取れる手段（メール・電話）がある</li>
+  </ul>
+</section>
+
+<!-- =========== 1章：作業概要 =========== -->
+<section>
+  <h2>1. 作業概要（5 ステップ）</h2>
+  <table class="compact steps">
+    <thead><tr><th>Step</th><th>内容</th><th>所要</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Entra ID 管理センターへアクセス</td><td>約 1 分</td></tr>
+      <tr><td>2</td><td>アプリ登録（名前・アカウント種類・リダイレクト URI）</td><td>約 5 分</td></tr>
+      <tr><td>3</td><td>API アクセス許可（スコープ）の追加</td><td>10〜15 分</td></tr>
+      <tr><td>4</td><td>認証設定（パブリッククライアントフローの有効化）</td><td>約 3 分</td></tr>
+      <tr><td>5</td><td>管理者同意の付与 + Client ID / Tenant ID の控え</td><td>約 5 分</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =========== 2章：Step 1 =========== -->
+<section>
+  <h2>2. Step 1: Entra ID 管理センターへアクセス</h2>
+
+  <table class="steps">
+    <tbody>
+      <tr><td>① ブラウザを開く</td><td><code>https://entra.microsoft.com</code></td></tr>
+      <tr><td>② サインイン</td><td>対象テナントの <strong>グローバル管理者</strong> または <strong>アプリケーション管理者</strong> アカウントで</td></tr>
+      <tr><td>③ 左サイドメニュー</td><td>「<strong>アプリの登録</strong>」をクリック（サイドバー直下にあります）<br>※見当たらない場合は「<strong>アプリケーション</strong>」を展開するとその中にあります</td></tr>
+    </tbody>
+  </table>
+
+  <div class="panel note">
+    旧 UI の Azure Portal（<code>https://portal.azure.com</code>）からも同じ操作可能：<br>
+    「Azure Active Directory」→「アプリの登録」
+  </div>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］Entra ID 管理センター・アプリの登録画面<br>
+      <small>保存先：<code>docs/assets/screenshots/step1_entra_top.png</code></small>
+    </span>
+    <figcaption><span class="label">図 1</span>左メニューの「アプリの登録」を開いた状態</figcaption>
+  </figure>
+
+  <div class="panel confirm">
+    <strong>確認ポイント：</strong>上部に「<strong>+ 新規登録</strong>」ボタンが見えれば正しい画面です。
+  </div>
+</section>
+
+<!-- =========== 3章：Step 2 =========== -->
+<section>
+  <h2>3. Step 2: アプリ登録</h2>
+
+  <table class="steps">
+    <tbody>
+      <tr><td>① 上部「<strong>+ 新規登録</strong>」をクリック</td><td>「アプリケーションの登録」画面に遷移</td></tr>
+      <tr><td>② <strong>名前</strong></td><td><code>（プロダクト名）-prod</code>（例：<code>athletie-prod</code> / <code>isms-audit-prod</code>）</td></tr>
+      <tr><td>③ <strong>サポートされているアカウントの種類</strong></td><td>✅「<strong>この組織ディレクトリのみに含まれるアカウント（[対象テナント名] のみ - シングルテナント）</strong>」を選択</td></tr>
+      <tr><td>④ <strong>リダイレクト URI</strong>（プラットフォーム）</td><td>「<strong>パブリッククライアント／ネイティブ（モバイルとデスクトップ）</strong>」</td></tr>
+      <tr><td>⑤ <strong>リダイレクト URI</strong>（URL）</td><td><code>http://localhost:8400/callback</code>（開発環境）<br>本番デプロイ後に更新依頼が改めて入る可能性があります</td></tr>
+      <tr><td>⑥ 「<strong>登録</strong>」ボタン</td><td>クリック → アプリが作成され「概要」画面が開く</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］アプリケーションの登録フォーム入力例<br>
+      <small>保存先：<code>docs/assets/screenshots/step2_new_registration.png</code></small>
+    </span>
+    <figcaption><span class="label">図 2</span>新規登録フォーム（名前・アカウント種類・リダイレクト URI 入力後）</figcaption>
+  </figure>
+
+  <div class="panel confirm">
+    <strong>確認ポイント：</strong>「概要」画面に <strong>アプリケーション (クライアント) ID</strong> と <strong>ディレクトリ (テナント) ID</strong> が表示されれば OK。
+  </div>
+</section>
+
+<!-- =========== 4章：Step 3 =========== -->
+<section>
+  <h2>4. Step 3: API アクセス許可（スコープ）の追加</h2>
+
+  <p>登録されたアプリの画面で：</p>
+  <table class="steps">
+    <tbody>
+      <tr><td>① 左メニュー</td><td>「<strong>API のアクセス許可</strong>」をクリック</td></tr>
+      <tr><td>② デフォルト権限を確認</td><td><code>Microsoft Graph / User.Read</code> が既に入っている（保持）</td></tr>
+      <tr><td>③ 「<strong>+ アクセス許可の追加</strong>」</td><td>クリック</td></tr>
+      <tr><td>④ 「<strong>Microsoft Graph</strong>」を選択</td><td>縦に並んだ API から選ぶ</td></tr>
+      <tr><td>⑤ 「<strong>委任されたアクセス許可</strong>」を選択</td><td>※「アプリケーションの許可」は選ばない</td></tr>
+      <tr><td>⑥ 検索ボックスに以下のスコープを 1 つずつ入力</td><td>該当行のチェックボックスを ON</td></tr>
+      <tr><td>⑦ 全て選択し終わったら「<strong>アクセス許可の追加</strong>」</td><td>⚠️ <strong>押さずに閉じるとチェックが全て破棄されます</strong>（複数回に分けて追加しても可）</td></tr>
+    </tbody>
+  </table>
+
+  <div class="panel warn">
+    <strong>⚠️ 検索しても項目が出てこない場合：</strong>検索結果はカテゴリ見出しで折りたたまれて表示されます。フルネーム（例：<code>Calendars.Read</code>）ではなく <strong>ドットより前のみ</strong>（例：<code>Calendars</code>）で検索し、出てきた<strong>見出し行をクリックして展開</strong>してから該当項目を選択してください。<code>Calendars.Read</code> / <code>People.Read</code> / <code>Presence.Read</code> はこの挙動で見落としやすい項目です。
+  </div>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］API のアクセス許可・追加ダイアログ<br>
+      <small>保存先：<code>docs/assets/screenshots/step3_api_permissions.png</code></small>
+    </span>
+    <figcaption><span class="label">図 3</span>「アクセス許可の追加」→「Microsoft Graph」→「委任されたアクセス許可」を選択した状態</figcaption>
+  </figure>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］スコープ検索とチェック<br>
+      <small>保存先：<code>docs/assets/screenshots/step3_scope_search.png</code></small>
+    </span>
+    <figcaption><span class="label">図 4</span>検索ボックスに <code>Files.Read.All</code> 等を入力し該当行をチェック</figcaption>
+  </figure>
+
+  <h3>4.1 必要スコープ一覧（全て追加してください）</h3>
+
+  <h4><span class="badge required">必須</span><span class="badge phase1">Phase 1</span> 現在稼働済みの機能</h4>
+  <table class="scopes compact">
+    <thead><tr><th>スコープ</th><th>用途</th><th>リスク・影響範囲</th></tr></thead>
+    <tbody>
+      <tr><td>User.Read</td><td>サインインユーザー自身の基本プロフィール（氏名・メアド等）取得</td><td>自分自身のみ</td></tr>
+      <tr><td>Team.ReadBasic.All</td><td>ユーザーが参加している Teams のチーム一覧取得</td><td>チーム名・ID（メンバー情報なし）</td></tr>
+      <tr><td>Channel.ReadBasic.All</td><td>チームのチャネル一覧取得</td><td>チャネル名・ID のみ</td></tr>
+      <tr><td>ChannelMessage.Read.All</td><td>チームのチャネル投稿メッセージ読み取り</td><td>参加しているチームのチャネルのみ</td></tr>
+      <tr><td>Group.Read.All</td><td>Microsoft 365 グループの基本情報（Teams と紐づくため必須）</td><td>グループ名・メンバー一覧</td></tr>
+      <tr><td>Sites.Read.All</td><td>SharePoint サイト・ライブラリ・ファイル横断検索</td><td>テナント内 SharePoint 全サイト読み取り</td></tr>
+      <tr><td>Files.Read.All</td><td>OneDrive for Business および SharePoint のファイル読み取り</td><td>アクセス権のある全ファイル</td></tr>
+      <tr><td>offline_access</td><td>リフレッシュトークン取得（再サインインの頻度を下げる）</td><td>リスクなし（OAuth 標準）</td></tr>
+    </tbody>
+  </table>
+
+  <h4><span class="badge required">必須</span><span class="badge phase2">Phase 2</span> 追加実装予定の機能</h4>
+  <table class="scopes compact">
+    <thead><tr><th>スコープ</th><th>用途</th><th>リスク・影響範囲</th></tr></thead>
+    <tbody>
+      <tr><td>Chat.Read</td><td>Teams の 1 対 1／グループチャットの読み取り</td><td>ユーザー自身が参加しているチャットのみ</td></tr>
+      <tr><td>Mail.Read</td><td>Outlook メールボックスの読み取り（受信箱・送信済・フォルダ）</td><td>ユーザー自身のメールボックスのみ</td></tr>
+      <tr><td>Calendars.Read</td><td>Outlook カレンダーの予定読み取り</td><td>ユーザー自身のカレンダーのみ</td></tr>
+      <tr><td>Notes.Read.All</td><td>OneNote ノートブックの読み取り</td><td>アクセス権のあるノートブック</td></tr>
+      <tr><td>Tasks.Read</td><td>Microsoft To Do タスク読み取り</td><td>ユーザー自身のタスクのみ</td></tr>
+      <tr><td>People.Read</td><td>関連する連絡先・人物情報（メール送信先候補等）取得</td><td>アドレス帳ベース</td></tr>
+      <tr><td>Presence.Read</td><td>プレゼンス情報（オンライン／退席中等）</td><td>ユーザー自身</td></tr>
+    </tbody>
+  </table>
+
+  <h4><span class="badge optional">任意</span> 高度な機能用（使用時に追加依頼します）</h4>
+  <table class="scopes compact">
+    <thead><tr><th>スコープ</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>Calendars.Read.Shared</td><td>共有カレンダー読み取り（チーム内予定確認）</td></tr>
+      <tr><td>Mail.Read.Shared</td><td>共有メールボックス読み取り</td></tr>
+      <tr><td>Directory.Read.All</td><td>組織のディレクトリ情報（部署・役職）取得</td></tr>
+      <tr><td>Reports.Read.All</td><td>Microsoft 365 利用状況レポート</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =========== 5章：Step 4 =========== -->
+<section>
+  <h2>5. Step 4: 認証設定（パブリッククライアントフロー有効化）</h2>
+
+  <table class="steps">
+    <tbody>
+      <tr><td>① 左メニュー</td><td>「<strong>Authentication (Preview)</strong>」をクリック（日本語表示の場合は「<strong>認証</strong>」）</td></tr>
+      <tr><td>② 開くのはリダイレクト URI 画面</td><td>クリック直後は「<strong>プラットフォーム構成</strong>」→「モバイル アプリケーションとデスクトップ アプリケーション」の画面が開きます。<code>http://localhost:8400/callback</code> が登録されていることを確認</td></tr>
+      <tr><td>③ <strong>「設定」タブへ切り替え</strong></td><td>⚠️ パブリッククライアントの設定は同じ画面にありません。<strong>ページ上部のタブから「設定」（英語表示では「Settings」）をクリック</strong></td></tr>
+      <tr><td>④ ページ下部へスクロール</td><td>「<strong>詳細設定</strong>」セクションまで移動</td></tr>
+      <tr><td>⑤ 「<strong>パブリック クライアント フローを許可する</strong>」</td><td>トグルを <strong>はい</strong>（オン・青）に変更</td></tr>
+      <tr><td>⑥ 「<strong>保存</strong>」</td><td>ページ上部の保存ボタンをクリック（新 UI では自動保存される場合あり）</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］認証画面・リダイレクト URI 確認<br>
+      <small>保存先：<code>docs/assets/screenshots/step4_authentication.png</code></small>
+    </span>
+    <figcaption><span class="label">図 5</span>「Authentication (Preview)」画面でリダイレクト URI を確認（設定は「設定」タブ側）</figcaption>
+  </figure>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］詳細設定・パブリッククライアントフロー有効化<br>
+      <small>保存先：<code>docs/assets/screenshots/step4_public_client.png</code></small>
+    </span>
+    <figcaption><span class="label">図 6</span>「パブリック クライアント フローを許可する」を「はい」に</figcaption>
+  </figure>
+
+  <h3>5.1 補足：パブリッククライアントフローとは</h3>
+  <p>クライアントシークレット（パスワード相当）を使わず、ブラウザでの OAuth 認証のみで動作する方式です。OAuth 2.0 + PKCE による標準的なセキュリティが担保されており、デスクトップアプリ・CLI ツール用途に推奨されています。</p>
+</section>
+
+<!-- =========== 6章：Step 5 =========== -->
+<section>
+  <h2>6. Step 5: 管理者同意の付与 + ID の控え</h2>
+
+  <h3>6.1 管理者同意の付与</h3>
+  <table class="steps">
+    <tbody>
+      <tr><td>① 左メニュー</td><td>「<strong>API のアクセス許可</strong>」に戻る</td></tr>
+      <tr><td>② 「<strong>[対象テナント名] に管理者の同意を与えます</strong>」ボタン</td><td>クリック</td></tr>
+      <tr><td>③ 確認ダイアログ</td><td>「<strong>はい</strong>」を選択</td></tr>
+      <tr><td>④ 完了後</td><td>全スコープの「状態」列が「<strong>[対象テナント名] に付与されました</strong>」（緑チェック）になることを確認</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］管理者同意付与後の状態<br>
+      <small>保存先：<code>docs/assets/screenshots/step5_admin_consent.png</code></small>
+    </span>
+    <figcaption><span class="label">図 7</span>全スコープが「付与されました」（緑チェック）になった状態</figcaption>
+  </figure>
+
+  <div class="panel warn">
+    <strong>⚠️ 管理者同意なしの場合：</strong>ユーザーが初回ログイン時に <strong>各人ごと</strong> に同意画面で OK する必要があり、UX が大幅に悪化します。本案件では管理者同意を付与いただく前提です。
+  </div>
+
+  <h3>6.2 Client ID / Tenant ID の控え</h3>
+  <table class="steps">
+    <tbody>
+      <tr><td>① 左メニュー</td><td>「<strong>概要</strong>」をクリック</td></tr>
+      <tr><td>② 「<strong>基本</strong>」セクションの 2 つの値を控える</td><td>以下の 2 項目を申請者にご返送ください</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="screenshot">
+    <span class="placeholder">［スクリーンショット］概要画面・Client ID / Tenant ID 表示<br>
+      <small>保存先：<code>docs/assets/screenshots/step5_overview.png</code></small>
+    </span>
+    <figcaption><span class="label">図 8</span>「概要」画面の「基本」セクション</figcaption>
+  </figure>
+
+  <p><strong>通知いただく情報：</strong></p>
+  <table class="compact">
+    <thead><tr><th>項目</th><th>控える値（UUID 形式）</th></tr></thead>
+    <tbody>
+      <tr><td>アプリケーション (クライアント) ID</td><td><code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code></td></tr>
+      <tr><td>ディレクトリ (テナント) ID</td><td><code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code></td></tr>
+      <tr><td>テナント ドメイン（任意）</td><td><code>（テナント名）.onmicrosoft.com</code> 等</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:9.5pt; color:var(--muted);">通知方法：申請者から事前にお伝えする社内メール または 暗号化メール／セキュアファイル共有にてお願いします。<br>
+  ※ Client ID / Tenant ID 単体では機密性は高くありませんが、組織の管理運用ルールに従ってください。</p>
+</section>
+
+<!-- =========== 7章：セキュリティ =========== -->
+<section>
+  <h2>7. セキュリティ・運用上の留意事項</h2>
+
+  <h3>7.1 本アプリができること（権限内）</h3>
+  <ul>
+    <li>委任権限のため、<strong>サインインしたユーザー本人がアクセスできる情報のみ</strong>取得します</li>
+    <li>ユーザーが見れないファイル・メッセージは取得できません</li>
+    <li>書き込み・削除・送信は <strong>一切できません</strong>（読み取りスコープのみ）</li>
+  </ul>
+
+  <h3>7.2 本アプリができないこと（権限外）</h3>
+  <ul>
+    <li>❌ 他のユーザーのデータへの直接アクセス</li>
+    <li>❌ ファイル・メールの編集・削除・新規作成</li>
+    <li>❌ アカウント情報の変更</li>
+    <li>❌ 管理者操作（ユーザー作成・権限変更等）</li>
+  </ul>
+
+  <h3>7.3 アクセストークンの取扱い</h3>
+  <ul>
+    <li>取得したアクセストークンは <strong>クライアント PC のローカルファイル</strong>（暗号化済み）に保存します</li>
+    <li>サーバ側・第三者には送信されません</li>
+    <li>リフレッシュトークン有効期限：90 日間（業界標準）</li>
+    <li>ユーザーがサインアウト操作を行うとローカルキャッシュも破棄します</li>
+  </ul>
+
+  <h3>7.4 監査・透明性</h3>
+  <ul>
+    <li>Microsoft Entra ID の <strong>サインインログ</strong> から、本アプリによる API 呼び出しは全て記録されます<br>
+        管理センター →「<strong>サインインログ</strong>」→ アプリ名でフィルタ可能</li>
+    <li>不審なアクセスがあれば即時アプリ登録を <strong>無効化</strong> いただくことで全 API アクセスを停止できます</li>
+    <li>必要に応じて <strong>条件付きアクセス</strong>（特定 IP・MFA 必須等）の設定も可能です</li>
+  </ul>
+
+  <h3>7.5 同意の撤回</h3>
+  <table class="compact">
+    <tbody>
+      <tr><td>完全削除</td><td>アプリ登録画面で「<strong>削除</strong>」</td></tr>
+      <tr><td>一時停止</td><td>アプリ登録画面で「<strong>非アクティブ化</strong>」</td></tr>
+      <tr><td>スコープ削減</td><td>「API のアクセス許可」で個別スコープを削除</td></tr>
+      <tr><td>ユーザー単位の同意取り消し</td><td>「<strong>エンタープライズアプリケーション</strong>」→ 該当アプリ →「アクセス許可」→ ユーザー個別</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- =========== 8章：FAQ =========== -->
+<section>
+  <h2>8. FAQ</h2>
+  <dl class="qa">
+    <dt>クライアントシークレットを発行する必要はありますか？</dt>
+    <dd><strong>いいえ、不要です。</strong>本案件はパブリッククライアント（PKCE）方式のため、シークレット発行は行いません。</dd>
+
+    <dt>スコープを一部だけ承認したいのですが？</dt>
+    <dd><strong>可能です。</strong>ただし機能の一部が動作しなくなる可能性があります。申請者にご相談ください。例：<code>Chat.Read</code> を外す → 1 対 1 チャット閲覧機能が無効化／<code>Mail.Read</code> を外す → メール検索機能が無効化／<code>Sites.Read.All</code> を外す → <strong>SharePoint 横断検索が動作しません</strong>（本案件のコア機能）</dd>
+
+    <dt>アプリ登録には Microsoft 365 ライセンスが必要ですか？</dt>
+    <dd><strong>いいえ、不要です。</strong>Entra ID Free でアプリ登録自体は可能です。ただし、本アプリを利用するエンドユーザー側には Microsoft 365 ライセンス（Teams／SharePoint／OneDrive 等のサービスにアクセスできるもの）が必要です。</dd>
+
+    <dt>既存の社内 SSO（Entra ID 連携）に影響しますか？</dt>
+    <dd><strong>影響ありません。</strong>本アプリは独立した OAuth クライアントとして登録され、既存の SSO 構成・条件付きアクセスポリシー・アプリケーションプロキシ等とは独立して動作します。</dd>
+
+    <dt>リダイレクト URI の <code>http://localhost:8400/callback</code> はセキュリティ上問題ないですか？</dt>
+    <dd><strong>問題ありません。</strong>OAuth 2.0 仕様で「ループバックアドレス」は例外的に HTTP が許可されており、デスクトップアプリの標準的な実装方式です（RFC 8252）。</dd>
+
+    <dt>条件付きアクセスの対象にできますか？</dt>
+    <dd><strong>可能です。</strong>「<strong>エンタープライズアプリケーション</strong>」→ 該当アプリ →「<strong>条件付きアクセス</strong>」から設定可能です。MFA 必須・特定 IP のみ許可等を強制できます。</dd>
+
+    <dt>ログ収集対象にできますか？</dt>
+    <dd><strong>可能です。</strong>Microsoft Entra ID の「<strong>サインインログ</strong>」「<strong>監査ログ</strong>」で本アプリの全アクティビティが取得できます。Microsoft Sentinel／Log Analytics へ転送して長期保管も可能です。</dd>
+  </dl>
+</section>
+
+<!-- =========== 9章：チェックリスト =========== -->
+<section>
+  <h2>9. 作業完了後のチェックリスト</h2>
+  <p>以下を全てチェックできれば作業完了です：</p>
+  <ul class="checklist">
+    <li>アプリ登録が完了し、「概要」画面に Client ID / Tenant ID が表示されている</li>
+    <li>サポートされているアカウントの種類が <strong>シングルテナント</strong> になっている</li>
+    <li>リダイレクト URI に <code>http://localhost:8400/callback</code> が <strong>パブリッククライアント</strong> として登録されている</li>
+    <li>「<strong>パブリック クライアント フローを許可する</strong>」が <strong>はい</strong> になっている</li>
+    <li>必要スコープ全てが <strong>管理者同意付与済み（緑チェック）</strong> になっている</li>
+    <li>Client ID / Tenant ID を申請者指定の方法で通知した</li>
+  </ul>
+</section>
+
+<!-- =========== 10章：連絡先 =========== -->
+<section>
+  <h2>10. 連絡先・お問い合わせ</h2>
+  <table class="compact">
+    <tbody>
+      <tr><td>本依頼書のバージョン</td><td>v1.4（2026-07-22）</td></tr>
+      <tr><td>案件名</td><td>（ここに記載：「（製品名）導入における Microsoft 365 連携設定」等）</td></tr>
+      <tr><td>申請者・担当者</td><td>（氏名・メールアドレス・内線/電話番号）</td></tr>
+      <tr><td>技術的問い合わせ</td><td>（氏名・メールアドレス）</td></tr>
+      <tr><td>不具合・緊急時連絡先</td><td>（氏名・電話番号）</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:9.5pt; color:var(--muted); margin-top:8pt;">
+  作業中に画面の表示と本書の記載が異なる場合や、不明な点・エラーが出た場合は、<strong>作業を一旦停止して</strong>申請者までお問い合わせください。Microsoft 側の UI 変更により本書の記述が古くなっている可能性があります。
+  </p>
+</section>
+
+<p style="text-align:center; font-size:10pt; margin-top:20pt;">
+  <a href="index.html">&laquo; やさしい版（画面操作だけの手順書）に戻る</a>
+</p>
+
+<div class="doc-footer">
+  Microsoft Entra ID アプリ登録 作業依頼書 ／ v1.4 ／ 印刷日：<span id="printDate"></span>
+</div>
+
+<script>
+  document.getElementById('printDate').textContent =
+    new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
+</script>
+
+</body>
+</html>
